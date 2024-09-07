@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using HangFire.Tests;
 
@@ -28,7 +29,11 @@ builder.Services.AddHangfire(configuration => configuration
 builder.Services.AddHangfireServer();
 
 var app = builder.Build();
-app.MapHangfireDashboard("/hangfireDashboard");
+app.MapHangfireDashboard("/hangfireDashboard",new DashboardOptions()
+{
+    IgnoreAntiforgeryToken = true,
+    Authorization = HangFirePanelAuthorization.SetBasicAuthorizationFilter()
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
