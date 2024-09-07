@@ -13,6 +13,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddRecurringJobs()
     .AddHangFireAuthorizationPolicy();
 
+builder.Services.AddScoped<ScopeServiceJob>();
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddHangfire(configuration => configuration
