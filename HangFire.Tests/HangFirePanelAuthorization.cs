@@ -5,9 +5,9 @@ using Hangfire.Dashboard.BasicAuthorization;
 
 namespace HangFire.Tests;
 
-public class HangFirePanelAuthorization
+public class HangFirePanelAuthorization(IConfiguration configuration)
 {
-    private static readonly Lazy<IDashboardAuthorizationFilter>
+    private  readonly Lazy<IDashboardAuthorizationFilter>
         BasicAuthenticationFilter = new( new BasicAuthAuthorizationFilter(new BasicAuthAuthorizationFilterOptions
         {
             RequireSsl = false,
@@ -18,15 +18,14 @@ public class HangFirePanelAuthorization
             {
                 new BasicAuthAuthorizationUser
                 {
-                    Login = "admin",
-
-                    PasswordClear = "admin"
+                    Login = configuration["Hangfire:UserName"],
+                    PasswordClear = configuration["Hangfire:Password"]
                 }
             }
         }));
     
        
 
-    public static IDashboardAuthorizationFilter[] SetBasicAuthorizationFilter()
+    public  IDashboardAuthorizationFilter[] SetBasicAuthorizationFilter()
         => [BasicAuthenticationFilter.Value];
 }

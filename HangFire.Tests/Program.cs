@@ -10,8 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddRecurringJobs();
+builder.Services.AddRecurringJobs()
+    .AddHangFireAuthorizationPolicy();
+
 builder.Services.AddHttpClient();
+
 builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
     .UseSimpleAssemblyNameTypeSerializer()
@@ -29,11 +32,7 @@ builder.Services.AddHangfire(configuration => configuration
 builder.Services.AddHangfireServer();
 
 var app = builder.Build();
-app.MapHangfireDashboard("/hangfireDashboard",new DashboardOptions()
-{
-    IgnoreAntiforgeryToken = true,
-    Authorization = HangFirePanelAuthorization.SetBasicAuthorizationFilter()
-});
+app.ConfigureHangFirePanel();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -18,6 +18,13 @@ public static class Extensions
         return services;
     }
 
+    public static IServiceCollection AddHangFireAuthorizationPolicy(this IServiceCollection services)
+    {
+        services.AddSingleton<HangFirePanelAuthorization>();
+
+        return services;
+    }
+
     public static void RunRecurringJobs(this WebApplication app)
     {
         var backgroundJobClient = app.Services.GetRequiredService<IRecurringJobManager>();
@@ -30,5 +37,18 @@ public static class Extensions
                 .AddOrUpdate(recurringJob.JobId,  () => recurringJob.ExecuteAsync(),
                 recurringJob.ExecutionTime);
         }
+    }
+
+    public static void ConfigureHangFirePanel(this WebApplication app)
+    {
+        var panelAuthorizationPolicy = app.Services.GetRequiredService<HangFirePanelAuthorization>();
+        
+        
+        app.MapHangfireDashboard("/hangfireDashboard",new DashboardOptions()
+        {
+            IgnoreAntiforgeryToken = true,
+            Authorization = panelAuthorizationPolicy.SetBasicAuthorizationFilter(),
+            DisplayStorageConnectionString = false
+        });
     }
 }
